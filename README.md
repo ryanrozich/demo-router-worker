@@ -10,6 +10,8 @@ A centralized Cloudflare Worker that routes and serves multiple demo application
 - 🎨 **Auto-generated Homepage** - Lists all demos with descriptions
 - ⚡ **SPA Support** - Client-side routing for React, Vue, etc.
 - 🔧 **Easy Integration** - Simple deployment from demo repos
+- 🛡️ **Built-in Security** - Rate limiting, security headers, CORS
+- 🔒 **Cloudflare Protection** - DDoS protection, SSL, firewall rules
 
 ## Architecture
 
@@ -232,12 +234,16 @@ local_directory = "./local-assets"
 - Check bucket name matches in `wrangler.toml`
 - Verify API token has R2 read/write permissions
 
-## Security Considerations
+## Security
 
-- Never commit API tokens or sensitive data
-- Use GitHub secrets for all credentials
-- Consider adding authentication for demo management APIs
-- Enable Cloudflare's security features (WAF, rate limiting)
+The router includes comprehensive security features:
+
+- **Rate Limiting**: 100 requests/minute per IP (configurable)
+- **Security Headers**: XSS, clickjacking, and content-type protection
+- **CORS Control**: Configurable origin restrictions
+- **Error Handling**: Generic error responses to prevent information leakage
+
+See [SECURITY.md](./SECURITY.md) for detailed configuration instructions.
 
 ## Contributing
 

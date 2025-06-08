@@ -1,10 +1,39 @@
 import { getContentType, getCacheControl } from './utils';
 import { Env, DemoMetadata } from './types';
+import { addSecurityHeaders, RateLimiter, getCorsHeaders } from './security';
 
-export default {
-  async fetch(request: Request, env: Env): Promise<Response> {
+// Initialize rate limiter (in-memory for each worker instance)
+const rateLimiter = new RateLimiter({
+  requests: 100, // 100 requests
+  windowMs: 60 * 1000, // per minute
+});
+
+async function handleRequest(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
     let pathname = url.pathname;
+    
+    // Handle CORS preflight
+    if (request.method === 'OPTIONS') {
+      return new Response(null, {
+        headers: getCorsHeaders(request.headers.get('Origin')),
+      });
+    }
+    
+    // Rate limiting by IP
+    const clientIP = request.headers.get('CF-Connecting-IP') || 'unknown';
+    const rateLimitKey = `ip:${clientIP}`;
+    
+    if (!(await rateLimiter.isAllowed(rateLimitKey))) {
+      return new Response('Too Many Requests', {
+        status: 429,
+        headers: {
+          'Retry-After': '60',
+          'X-RateLimit-Limit': '100',
+          'X-RateLimit-Remaining': '0',
+          'X-RateLimit-Reset': new Date(Date.now() + 60000).toISOString(),
+        },
+      });
+    }
     
     // Remove trailing slash for consistency
     if (pathname !== '/' && pathname.endsWith('/')) {
@@ -73,8 +102,7 @@ export default {
         'X-Demo-Name': project,
       },
     });
-  },
-};
+}
 
 async function showDemoListing(env: Env): Promise<Response> {
   const { keys } = await env.DEMO_CONFIG.list<DemoMetadata>();
@@ -193,10 +221,28 @@ async function showDemoListing(env: Env): Promise<Response> {
   });
 }
 
-async function handleAPI(request: Request, env: Env): Promise<Response> {
+async function handleAPI(_request: Request, _env: Env): Promise<Response> {
   // Future: Add API endpoints for managing demos
   // Could include webhook endpoints for GitHub Actions
   return new Response(JSON.stringify({ message: 'API coming soon' }), {
     headers: { 'Content-Type': 'application/json' },
   });
 }
+
+export default {
+  async fetch(request: Request, env: Env): Promise<Response> {
+    try {
+      const response = await handleRequest(request, env);
+      return addSecurityHeaders(response);
+    } catch (error) {
+      // Log error for debugging
+      console.error('Worker error:', error);
+      
+      // Return generic error response
+      return addSecurityHeaders(new Response('Internal Server Error', {
+        status: 500,
+        headers: { 'Content-Type': 'text/plain' },
+      }));
+    }
+  },
+};
