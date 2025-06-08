@@ -179,7 +179,7 @@ async function showDemoListing(env: Env): Promise<Response> {
   
   let html = `
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -190,87 +190,113 @@ async function showDemoListing(env: Env): Promise<Response> {
   <meta property="og:description" content="Interactive demos and experiments">
   <meta property="og:type" content="website">
   <link rel="canonical" href="https://demo.rozich.net/">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            zinc: {
+              850: '#1f1f23',
+              950: '#0a0a0c'
+            }
+          }
+        }
+      }
+    }
+  </script>
   <style>
-    * { box-sizing: border-box; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      line-height: 1.6;
-      color: #333;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 2rem;
-      background: #f5f5f5;
-    }
-    h1 {
-      color: #2563eb;
-      margin-bottom: 2rem;
-      font-size: 2.5rem;
-    }
-    .demo-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1.5rem;
-      margin-top: 2rem;
-    }
-    .demo-card {
-      background: white;
-      border-radius: 8px;
-      padding: 1.5rem;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .demo-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
-    .demo-card.featured {
-      border: 2px solid #2563eb;
-    }
-    .demo-card h2 {
-      margin: 0 0 0.5rem 0;
-      font-size: 1.25rem;
-    }
-    .demo-card a {
-      color: #2563eb;
-      text-decoration: none;
-    }
-    .demo-card a:hover {
-      text-decoration: underline;
-    }
-    .demo-meta {
-      font-size: 0.875rem;
-      color: #666;
-      margin-top: 0.5rem;
-    }
-    .demo-description {
-      margin: 0.5rem 0;
-      color: #555;
-    }
-    .featured-badge {
-      display: inline-block;
-      background: #2563eb;
-      color: white;
-      padding: 0.25rem 0.5rem;
-      border-radius: 4px;
-      font-size: 0.75rem;
-      margin-bottom: 0.5rem;
-    }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    .font-inter { font-family: 'Inter', sans-serif; }
   </style>
 </head>
-<body>
-  <h1>Demo Projects</h1>
-  <div class="demo-grid">
-    ${demos.map(demo => `
-      <div class="demo-card ${demo.featured ? 'featured' : ''}">
-        ${demo.featured ? '<span class="featured-badge">Featured</span>' : ''}
-        <h2><a href="/${demo.name}/">${demo.name}</a></h2>
-        ${demo.description ? `<p class="demo-description">${demo.description}</p>` : ''}
-        <div class="demo-meta">
-          Updated: ${demo.updated ? new Date(demo.updated).toLocaleDateString() : 'Unknown'}
-          ${demo.github ? `• <a href="${demo.github}" target="_blank">GitHub</a>` : ''}
+<body class="h-full bg-zinc-950 font-inter">
+  <div class="min-h-full">
+    <!-- Header -->
+    <header class="bg-zinc-900/50 backdrop-blur-sm border-b border-zinc-800">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h1 class="text-3xl font-bold text-white">Demo Gallery</h1>
+            <p class="mt-1 text-sm text-zinc-400">Interactive examples and experiments</p>
+          </div>
+          <div class="flex items-center space-x-4">
+            <a href="https://github.com/ryanrozich" target="_blank" class="text-zinc-400 hover:text-white transition-colors">
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+              </svg>
+            </a>
+          </div>
         </div>
       </div>
-    `).join('')}
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      ${demos.length === 0 ? `
+        <div class="text-center py-16">
+          <svg class="mx-auto h-12 w-12 text-zinc-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          <h3 class="mt-2 text-sm font-medium text-zinc-300">No demos yet</h3>
+          <p class="mt-1 text-sm text-zinc-500">Get started by deploying your first demo project.</p>
+        </div>
+      ` : `
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          ${demos.map(demo => `
+            <div class="group relative rounded-xl bg-zinc-900 p-6 hover:bg-zinc-850 transition-all duration-200 ring-1 ring-zinc-800 hover:ring-zinc-700 ${demo.featured ? 'ring-2 ring-blue-500/50' : ''}">
+              ${demo.featured ? `
+                <div class="absolute -top-2 -right-2">
+                  <span class="inline-flex items-center rounded-full bg-blue-500 px-3 py-1 text-xs font-medium text-white">
+                    Featured
+                  </span>
+                </div>
+              ` : ''}
+              
+              <div class="flex items-start justify-between">
+                <div class="flex-1">
+                  <h3 class="text-lg font-semibold text-white group-hover:text-blue-400 transition-colors">
+                    <a href="/${demo.name}/" class="focus:outline-none">
+                      <span class="absolute inset-0" aria-hidden="true"></span>
+                      ${demo.name}
+                    </a>
+                  </h3>
+                  ${demo.description ? `
+                    <p class="mt-2 text-sm text-zinc-400 line-clamp-2">${demo.description}</p>
+                  ` : ''}
+                </div>
+              </div>
+              
+              <div class="mt-4 flex items-center justify-between text-xs">
+                <span class="text-zinc-500">
+                  ${demo.updated ? new Date(demo.updated).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Recently added'}
+                </span>
+                ${demo.github ? `
+                  <a href="${demo.github}" target="_blank" class="relative z-10 inline-flex items-center text-zinc-400 hover:text-white transition-colors">
+                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    Source
+                  </a>
+                ` : ''}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `}
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-24 border-t border-zinc-800">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <p class="text-center text-sm text-zinc-500">
+          Built with 
+          <a href="https://workers.cloudflare.com" target="_blank" class="text-zinc-400 hover:text-white transition-colors">Cloudflare Workers</a>
+          • 
+          <a href="https://github.com/ryanrozich/demo-router-worker" target="_blank" class="text-zinc-400 hover:text-white transition-colors">View Source</a>
+        </p>
+      </div>
+    </footer>
   </div>
 </body>
 </html>`;
