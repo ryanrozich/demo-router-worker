@@ -5,3 +5,9 @@ dist/
 .env.local
 .DS_Store
 *.log
+
+# Ignore actual deployment workflow
+.github/workflows/deploy.yml
+
+# Personal configuration
+wrangler.toml.personal

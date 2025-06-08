@@ -2,20 +2,15 @@ name = "demo-router"
 main = "src/index.ts"
 compatibility_date = "2024-01-01"
 
-# Custom domain routing
-[[routes]]
-pattern = "demo.rozich.net/*"
-zone_name = "rozich.net"
-
 # R2 bucket for demo assets
 [[r2_buckets]]
 binding = "DEMO_ASSETS"
-bucket_name = "rozich-demos"
+bucket_name = "demo-assets" # Change to your bucket name
 
 # KV namespace for demo metadata
 [[kv_namespaces]]
 binding = "DEMO_CONFIG"
-id = "b0cc56f8dbf54ebd86d4d43567e1ad99"
+id = "YOUR_KV_NAMESPACE_ID" # Run setup script or replace with your KV namespace ID
 
 # Optional: Analytics
 # [[analytics_engine_datasets]]

@@ -75,19 +75,27 @@ After deployment, you need to configure these resources in your [Cloudflare dash
 5. Enter your subdomain (e.g., `demo.yourdomain.com`)
 6. Save (DNS will be configured automatically)
 
-### 3. GitHub Secrets Setup
+### 3. GitHub Actions Setup (Optional)
 
-For automated deployment, add these secrets to your GitHub repository:
+To enable automated deployment on push:
 
-```bash
-# Get your Cloudflare API token
-# Dashboard → My Profile → API Tokens → Create Token
-# Use "Edit Cloudflare Workers" template with KV and R2 permissions
-gh secret set CLOUDFLARE_API_TOKEN
+1. Copy the example workflow:
+   ```bash
+   cp .github/workflows/deploy.yml.example .github/workflows/deploy.yml
+   ```
 
-# Get your Account ID from Cloudflare dashboard (right sidebar)
-gh secret set CLOUDFLARE_ACCOUNT_ID
-```
+2. Add these secrets to your GitHub repository:
+   ```bash
+   # Get your Cloudflare API token
+   # Dashboard → My Profile → API Tokens → Create Token
+   # Use "Edit Cloudflare Workers" template with KV and R2 permissions
+   gh secret set CLOUDFLARE_API_TOKEN
+
+   # Get your Account ID from Cloudflare dashboard (right sidebar)
+   gh secret set CLOUDFLARE_ACCOUNT_ID
+   ```
+
+**Note**: The `.github/workflows/deploy.yml` is gitignored to prevent accidental deployments to the wrong account.
 
 ## Configuration
 
