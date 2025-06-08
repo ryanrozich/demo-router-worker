@@ -15,9 +15,11 @@ This is a Cloudflare Worker that acts as a centralized router for hosting multip
 
 ## Key Files
 
-- `src/index.ts` - Main router logic
+- `src/index.ts` - Main router logic with SEO and analytics
 - `src/utils.ts` - Helper functions for content types and caching
 - `src/types.ts` - TypeScript interfaces
+- `src/security.ts` - Security headers and rate limiting
+- `src/analytics.ts` - Analytics integration (PostHog, Plausible, etc.)
 - `wrangler.toml` - Cloudflare Worker configuration
 - `scripts/setup.sh` - Automated setup script
 - `scripts/deploy-demo.sh` - Demo deployment helper
@@ -56,6 +58,9 @@ npm run deploy-demo <demo-name> <build-dir> [description] [github-url]
 - Check if worker is deployed: `curl https://worker-subdomain.workers.dev`
 - Check custom domain: `curl https://demo.yourdomain.com`
 - List demos: `npm run list-demos`
+- Run tests: `npm test`
+- Type check: `npm run typecheck`
+- Lint code: `npm run lint`
 
 ## Common Issues
 
@@ -80,9 +85,20 @@ demo-router-worker/
 3. Metadata is stored in KV
 4. Router serves assets and generates homepage
 
+## Features Added
+
+- **SEO Optimization**: robots.txt, sitemap.xml, meta tags
+- **Analytics Support**: Multiple providers (PostHog, Plausible, Cloudflare)
+- **Security**: Basic headers, rate limiting (1000 req/min)
+- **Testing**: Vitest with Cloudflare Workers support
+- **Linting**: Trunk.io with ESLint, Prettier, and more
+- **CI/CD**: GitHub Actions for testing and deployment
+
 ## Important Notes
 
 - This is a public repository template
 - Users need their own Cloudflare account and resources
 - The setup script automates most configuration
 - Custom domains are configured in Cloudflare dashboard, not DNS
+- Security is intentionally permissive for demo sites
+- Analytics are privacy-friendly and optional
