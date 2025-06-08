@@ -1,0 +1,13 @@
+name = "demo-router"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+# R2 bucket for demo assets
+[[r2_buckets]]
+binding = "DEMO_ASSETS"
+bucket_name = "YOUR_BUCKET_NAME"
+
+# KV namespace for demo metadata
+[[kv_namespaces]]
+binding = "DEMO_CONFIG"
+id = "YOUR_KV_NAMESPACE_ID"

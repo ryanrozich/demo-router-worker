@@ -5,6 +5,9 @@
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
+    "setup": "./scripts/setup.sh",
+    "deploy-demo": "./scripts/deploy-demo.sh",
+    "list-demos": "wrangler kv:key list --binding=DEMO_CONFIG",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
