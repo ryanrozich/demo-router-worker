@@ -5,17 +5,9 @@ compatibility_date = "2024-01-01"
 # R2 bucket for demo assets
 [[r2_buckets]]
 binding = "DEMO_ASSETS"
-bucket_name = "demo-assets" # Change to your bucket name
+bucket_name = "rozich-demos"
 
 # KV namespace for demo metadata
 [[kv_namespaces]]
 binding = "DEMO_CONFIG"
-id = "YOUR_KV_NAMESPACE_ID" # Run setup script or replace with your KV namespace ID
-
-# Analytics Configuration (optional)
-# [vars]
-# ANALYTICS_PROVIDER = "posthog" # Options: posthog, plausible, simple, cloudflare, none
-# POSTHOG_API_KEY = "your-posthog-project-api-key"
-# POSTHOG_HOST = "https://app.posthog.com" # Or your self-hosted instance
-# PLAUSIBLE_DOMAIN = "demo.rozich.net"
-# SIMPLE_HOSTNAME = "demo.rozich.net"
+id = "b0cc56f8dbf54ebd86d4d43567e1ad99"
