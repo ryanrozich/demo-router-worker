@@ -34,13 +34,13 @@ demo.yourdomain.com/
 
 ### 1. Deploy with GitHub Actions
 
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/YOUR_USERNAME/demo-router-worker)
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/ryanrozich/demo-router-worker)
 
 **OR** manually:
 
 ```bash
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/demo-router-worker
+git clone https://github.com/ryanrozich/demo-router-worker
 cd demo-router-worker
 
 # Install dependencies
