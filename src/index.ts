@@ -90,7 +90,7 @@ async function showDemoListing(env: Env): Promise<Response> {
   demos.sort((a, b) => {
     if (a.featured && !b.featured) return -1;
     if (!a.featured && b.featured) return 1;
-    return new Date(b.updated).getTime() - new Date(a.updated).getTime();
+    return new Date(b.updated || '').getTime() - new Date(a.updated || '').getTime();
   });
   
   const html = `
@@ -176,7 +176,7 @@ async function showDemoListing(env: Env): Promise<Response> {
         <h2><a href="/${demo.name}/">${demo.name}</a></h2>
         ${demo.description ? `<p class="demo-description">${demo.description}</p>` : ''}
         <div class="demo-meta">
-          Updated: ${new Date(demo.updated).toLocaleDateString()}
+          Updated: ${demo.updated ? new Date(demo.updated).toLocaleDateString() : 'Unknown'}
           ${demo.github ? `• <a href="${demo.github}" target="_blank">GitHub</a>` : ''}
         </div>
       </div>

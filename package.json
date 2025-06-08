@@ -8,10 +8,12 @@
     "setup": "./scripts/setup.sh",
     "deploy-demo": "./scripts/deploy-demo.sh",
     "list-demos": "wrangler kv:key list --binding=DEMO_CONFIG",
+    "build": "tsc --noEmit",
     "test": "vitest",
     "test:ci": "vitest run",
     "lint": "trunk check",
-    "lint:fix": "trunk check --fix"
+    "lint:fix": "trunk check --fix",
+    "typecheck": "tsc --noEmit"
   },
   "keywords": [],
   "author": "",
