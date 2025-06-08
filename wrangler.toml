@@ -15,7 +15,7 @@ bucket_name = "rozich-demos"
 # KV namespace for demo metadata
 [[kv_namespaces]]
 binding = "DEMO_CONFIG"
-id = "YOUR_KV_NAMESPACE_ID" # Create in dashboard first
+id = "b0cc56f8dbf54ebd86d4d43567e1ad99"
 
 # Optional: Analytics
 # [[analytics_engine_datasets]]
