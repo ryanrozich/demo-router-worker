@@ -1,12 +1,31 @@
 import { getContentType, getCacheControl } from './utils';
 import { Env, DemoMetadata } from './types';
 import { addSecurityHeaders, RateLimiter, getCorsHeaders } from './security';
+import { AnalyticsConfig, addAnalyticsToHTML, trackPageView } from './analytics';
 
-// Initialize rate limiter (in-memory for each worker instance)
+// Initialize rate limiter with very permissive settings
 const rateLimiter = new RateLimiter({
-  requests: 100, // 100 requests
+  requests: 1000, // 1000 requests
   windowMs: 60 * 1000, // per minute
 });
+
+function getAnalyticsConfig(env: Env): AnalyticsConfig {
+  const provider = env.ANALYTICS_PROVIDER as AnalyticsConfig['provider'] || 'none';
+  
+  return {
+    provider,
+    posthog: provider === 'posthog' ? {
+      apiKey: env.POSTHOG_API_KEY || '',
+      host: env.POSTHOG_HOST,
+    } : undefined,
+    plausible: provider === 'plausible' ? {
+      domain: env.PLAUSIBLE_DOMAIN || '',
+    } : undefined,
+    simple: provider === 'simple' ? {
+      hostname: env.SIMPLE_HOSTNAME || '',
+    } : undefined,
+  };
+}
 
 async function handleRequest(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
@@ -40,9 +59,46 @@ async function handleRequest(request: Request, env: Env): Promise<Response> {
       pathname = pathname.slice(0, -1);
     }
     
+    // Track page view (non-blocking)
+    const analyticsConfig = getAnalyticsConfig(env);
+    trackPageView(analyticsConfig, pathname, {
+      referrer: request.headers.get('Referer'),
+      userAgent: request.headers.get('User-Agent'),
+    });
+    
     // Homepage - show demo listing
     if (pathname === '/' || pathname === '') {
       return await showDemoListing(env);
+    }
+    
+    // robots.txt for search engines
+    if (pathname === '/robots.txt') {
+      return new Response(`User-agent: *
+Allow: /
+Sitemap: https://demo.rozich.net/sitemap.xml
+
+# Allow all search engines
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /`, {
+        headers: {
+          'Content-Type': 'text/plain',
+          'Cache-Control': 'public, max-age=86400', // 1 day
+        },
+      });
+    }
+    
+    // Sitemap
+    if (pathname === '/sitemap.xml') {
+      return await generateSitemap(env);
     }
     
     // API endpoint for demo management (future use)
@@ -121,13 +177,19 @@ async function showDemoListing(env: Env): Promise<Response> {
     return new Date(b.updated || '').getTime() - new Date(a.updated || '').getTime();
   });
   
-  const html = `
+  let html = `
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rozich.net Demos</title>
+  <title>Demo Projects - Interactive Examples and Experiments</title>
+  <meta name="description" content="Explore interactive demos, experiments, and proof-of-concepts. Browse through various web technologies and frameworks in action.">
+  <meta name="robots" content="index, follow">
+  <meta property="og:title" content="Demo Projects">
+  <meta property="og:description" content="Interactive demos and experiments">
+  <meta property="og:type" content="website">
+  <link rel="canonical" href="https://demo.rozich.net/">
   <style>
     * { box-sizing: border-box; }
     body {
@@ -213,6 +275,10 @@ async function showDemoListing(env: Env): Promise<Response> {
 </body>
 </html>`;
   
+  // Add analytics to HTML
+  const analyticsConfig = getAnalyticsConfig(env);
+  html = addAnalyticsToHTML(html, analyticsConfig);
+  
   return new Response(html, {
     headers: { 
       'Content-Type': 'text/html; charset=utf-8',
@@ -226,6 +292,40 @@ async function handleAPI(_request: Request, _env: Env): Promise<Response> {
   // Could include webhook endpoints for GitHub Actions
   return new Response(JSON.stringify({ message: 'API coming soon' }), {
     headers: { 'Content-Type': 'application/json' },
+  });
+}
+
+async function generateSitemap(env: Env): Promise<Response> {
+  const { keys } = await env.DEMO_CONFIG.list<DemoMetadata>();
+  
+  const demos = await Promise.all(
+    keys.map(async ({ name }) => {
+      const metadata = await env.DEMO_CONFIG.get<DemoMetadata>(name, 'json');
+      return { name, updated: metadata?.updated };
+    })
+  );
+  
+  const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://demo.rozich.net/</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  ${demos.map(demo => `
+  <url>
+    <loc>https://demo.rozich.net/${demo.name}/</loc>
+    ${demo.updated ? `<lastmod>${new Date(demo.updated).toISOString().split('T')[0]}</lastmod>` : ''}
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>`).join('')}
+</urlset>`;
+  
+  return new Response(sitemap, {
+    headers: {
+      'Content-Type': 'application/xml',
+      'Cache-Control': 'public, max-age=3600', // 1 hour
+    },
   });
 }
 

@@ -1,22 +1,15 @@
 export function addSecurityHeaders(response: Response): Response {
   const headers = new Headers(response.headers);
   
-  // Security headers
+  // Basic security headers
   headers.set('X-Content-Type-Options', 'nosniff');
-  headers.set('X-Frame-Options', 'DENY');
-  headers.set('X-XSS-Protection', '1; mode=block');
+  headers.set('X-Frame-Options', 'SAMEORIGIN'); // Allow embedding on same domain
   headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-  headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
   
-  // Content Security Policy - adjust based on your demos' needs
+  // Permissive CSP for demos - allows most common resources
   const csp = [
-    "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://unpkg.com",
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-    "font-src 'self' https://fonts.gstatic.com",
-    "img-src 'self' data: https: blob:",
-    "connect-src 'self' https://api.github.com",
-    "frame-ancestors 'none'",
+    "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:",
+    "frame-ancestors 'self'", // Still prevent clickjacking from other sites
   ].join('; ');
   
   headers.set('Content-Security-Policy', csp);

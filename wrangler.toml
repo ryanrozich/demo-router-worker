@@ -12,6 +12,10 @@ bucket_name = "demo-assets" # Change to your bucket name
 binding = "DEMO_CONFIG"
 id = "YOUR_KV_NAMESPACE_ID" # Run setup script or replace with your KV namespace ID
 
-# Optional: Analytics
-# [[analytics_engine_datasets]]
-# binding = "ANALYTICS"
+# Analytics Configuration (optional)
+# [vars]
+# ANALYTICS_PROVIDER = "posthog" # Options: posthog, plausible, simple, cloudflare, none
+# POSTHOG_API_KEY = "your-posthog-project-api-key"
+# POSTHOG_HOST = "https://app.posthog.com" # Or your self-hosted instance
+# PLAUSIBLE_DOMAIN = "demo.rozich.net"
+# SIMPLE_HOSTNAME = "demo.rozich.net"

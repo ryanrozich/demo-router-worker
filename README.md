@@ -10,8 +10,9 @@ A centralized Cloudflare Worker that routes and serves multiple demo application
 - 🎨 **Auto-generated Homepage** - Lists all demos with descriptions
 - ⚡ **SPA Support** - Client-side routing for React, Vue, etc.
 - 🔧 **Easy Integration** - Simple deployment from demo repos
-- 🛡️ **Built-in Security** - Rate limiting, security headers, CORS
-- 🔒 **Cloudflare Protection** - DDoS protection, SSL, firewall rules
+- 🛡️ **SEO Friendly** - Robots.txt, sitemap.xml, meta tags
+- 📊 **Analytics Ready** - Support for PostHog, Plausible, and more
+- 🔒 **Secure by Default** - HTTPS, security headers, Cloudflare protection
 
 ## Architecture
 
@@ -234,16 +235,23 @@ local_directory = "./local-assets"
 - Check bucket name matches in `wrangler.toml`
 - Verify API token has R2 read/write permissions
 
-## Security
+## Security & Analytics
 
-The router includes comprehensive security features:
+### Security
+The router includes appropriate security for a public demo site:
+- **Basic Protection**: Security headers and error handling
+- **Search Engine Friendly**: Allows crawlers and legitimate bots
+- **Cloudflare Protection**: Automatic DDoS protection and SSL
 
-- **Rate Limiting**: 100 requests/minute per IP (configurable)
-- **Security Headers**: XSS, clickjacking, and content-type protection
-- **CORS Control**: Configurable origin restrictions
-- **Error Handling**: Generic error responses to prevent information leakage
+See [SECURITY.md](./SECURITY.md) for details.
 
-See [SECURITY.md](./SECURITY.md) for detailed configuration instructions.
+### Analytics
+Easy integration with privacy-friendly analytics:
+- **Multiple Providers**: PostHog, Plausible, Simple Analytics, Cloudflare
+- **Privacy First**: No cookies, GDPR compliant options
+- **Easy Setup**: Just add your API keys to `wrangler.toml`
+
+See [ANALYTICS.md](./ANALYTICS.md) for setup instructions.
 
 ## Contributing
 
